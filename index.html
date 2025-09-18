@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AttendEase - Smart Attendance Management</title>
+    <link rel="icon" type="image/png" href="attendance logo.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#8b5cf6',
+                        accent: '#06b6d4',
+                        success: '#10b981',
+                        warning: '#f59e0b',
+                        danger: '#ef4444'
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'bounce-in': 'bounceIn 0.6s ease-out'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="min-h-screen transition-colors duration-300 bg-gray-50 dark:bg-gray-900">
+    <nav class="bg-white dark:bg-gray-800 shadow-lg border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="goHome()">
+                    <div class="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">A</span>
+                    </div>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                        AttendEase
+                    </h1>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div id="current-time" class="text-sm text-gray-600 dark:text-gray-300 font-medium"></div>
+                    <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                        <span id="theme-icon" class="text-xl">🌙</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="main-content">
+        <div id="home-page" class="min-h-screen gradient-bg flex items-center justify-center p-4">
+            <div class="max-w-6xl mx-auto animate-fade-in">
+                <div class="text-center mb-12">
+                    <h2 class="text-5xl font-bold text-white mb-4 animate-bounce-in">Smart Attendance Management</h2>
+                    <p class="text-xl text-gray-200 mb-8">Streamline your attendance tracking with intelligent insights</p>
+                    <div class="flex justify-center items-center gap-4 text-white/80">
+                        <span class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-green-400 rounded-full pulse-dot"></div>
+                            Real-time tracking
+                        </span>
+                        <span class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-blue-400 rounded-full pulse-dot"></div>
+                            Smart analytics
+                        </span>
+                        <span class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-purple-400 rounded-full pulse-dot"></div>
+                            Easy management
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="card-hover bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="text-2xl">👨‍🎓</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-3">Student Portal</h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-6">Access your personal dashboard with attendance insights, schedule management, and smart suggestions</p>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                                ✓ Personal attendance tracking<br>
+                                ✓ Smart study suggestions<br>
+                                ✓ Schedule management
+                            </div>
+                            <button onclick="showLogin('student')" class="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-600 hover:to-cyan-600 transition-all transform hover:scale-105">
+                                Login as Student
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-hover bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="text-2xl">👩‍🏫</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-3">Teacher Portal</h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-6">Efficiently mark attendance, manage classes, and track student progress with powerful tools</p>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                                ✓ Quick attendance marking<br>
+                                ✓ Class management<br>
+                                ✓ Student analytics
+                            </div>
+                            <button onclick="showLogin('teacher')" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 px-6 rounded-lg font-semibold hover:from-purple-600 hover:to-pink-600 transition-all transform hover:scale-105">
+                                Login as Teacher
+                            </button>
+                            <button onclick="showQrLogin()" class="w-full mt-4 bg-gradient-to-r from-teal-500 to-cyan-500 text-white py-3 px-6 rounded-lg font-semibold hover:from-teal-600 hover:to-cyan-600 transition-all transform hover:scale-105">
+                                Login with QR Code
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-hover bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="text-2xl">📺</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-3">Classroom Display</h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-6">Real-time attendance display for classrooms with live updates and comprehensive statistics</p>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                                ✓ Live attendance display<br>
+                                ✓ Real-time updates<br>
+                                ✓ Comprehensive stats
+                            </div>
+                            <button onclick="showClassroomSetup()" class="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 px-6 rounded-lg font-semibold hover:from-green-600 hover:to-emerald-600 transition-all transform hover:scale-105">
+                                Setup Display
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-16 text-center">
+                    <h3 class="text-2xl font-bold text-white mb-8">Why Choose AttendEase?</h3>
+                    <div class="grid md:grid-cols-4 gap-6">
+                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-white">
+                            <div class="text-3xl mb-3">⚡</div>
+                            <h4 class="font-semibold mb-2">Lightning Fast</h4>
+                            <p class="text-sm text-white/80">Quick attendance marking with instant updates</p>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-white">
+                            <div class="text-3xl mb-3">🎯</div>
+                            <h4 class="font-semibold mb-2">Smart Insights</h4>
+                            <p class="text-sm text-white/80">AI-powered suggestions and analytics</p>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-white">
+                            <div class="text-3xl mb-3">📱</div>
+                            <h4 class="font-semibold mb-2">Responsive Design</h4>
+                            <p class="text-sm text-white/80">Works perfectly on all devices</p>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-white">
+                            <div class="text-3xl mb-3">🔒</div>
+                            <h4 class="font-semibold mb-2">Secure & Reliable</h4>
+                            <p class="text-sm text-white/80">Your data is safe and always available</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-md w-full animate-slide-up">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-white text-2xl">🔐</span>
+                    </div>
+                    <h3 id="login-title" class="text-2xl font-bold text-gray-800 dark:text-white mb-2"></h3>
+                    <p class="text-gray-600 dark:text-gray-300">Enter your credentials to continue</p>
+                </div>
+                
+                <form id="login-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Username</label>
+                        <input type="text" id="username" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition-all" placeholder="Enter username" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
+                        <input type="password" id="password" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition-all" placeholder="Enter password" required>
+                    </div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-primary to-secondary text-white py-3 px-6 rounded-lg font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all transform hover:scale-105">
+                        Login
+                    </button>
+                </form>
+                
+                <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Demo Credentials:</p>
+                    <div class="text-xs text-gray-400 dark:text-gray-500">
+                        Username: demo | Password: demo
+                    </div>
+                </div>
+                
+                <button onclick="hideLogin()" class="mt-4 w-full text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
+                    Cancel
+                </button>
+            </div>
+        </div>
+
+        <div id="student-dashboard" class="hidden min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800 dark:text-white">Student Dashboard</h2>
+                        <p class="text-gray-600 dark:text-gray-300">Welcome back, <span id="student-name" class="font-semibold text-primary">John Doe</span></p>
+                        <div id="current-status" class="mt-2 px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm font-medium inline-flex items-center gap-2">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full pulse-dot"></div>
+                            Free Period - Next class: Physics at 2:00 PM
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <button onclick="showQrScanner()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-105">
+                            Scan QR
+                        </button>
+                        <div class="relative">
+                            <button onclick="toggleNotifications()" class="p-3 rounded-lg bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+                                <span class="text-2xl">🔔</span>
+                                <span id="notification-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-bounce">3</span>
+                            </button>
+                            <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 animate-slide-up">
+                                <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                                    <h3 class="font-semibold text-gray-800 dark:text-white">Notifications</h3>
+                                </div>
+                                <div id="notifications-list" class="max-h-96 overflow-y-auto">
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-105">
+                            Logout
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <div class="border-b border-gray-200 dark:border-gray-700">
+                        <nav class="-mb-px flex space-x-8">
+                            <button onclick="switchStudentTab('overview')" class="student-tab active py-2 px-1 border-b-2 border-primary text-primary font-medium text-sm transition-all">
+                                📊 Overview
+                            </button>
+                            <button onclick="switchStudentTab('schedule')" class="student-tab py-2 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 font-medium text-sm transition-all">
+                                📅 Today's Schedule
+                            </button>
+                            <button onclick="switchStudentTab('routine')" class="student-tab py-2 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 font-medium text-sm transition-all">
+                                📝 My Routine
+                            </button>
+                            <button onclick="switchStudentTab('attendance')" class="student-tab py-2 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 font-medium text-sm transition-all">
+                                📈 Attendance History
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+
+                <div id="student-tab-content">
+                    <div id="overview-tab" class="student-tab-content">
+                        <div class="grid md:grid-cols-4 gap-6 mb-8">
+                            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg card-hover">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Total Classes</p>
+                                        <p class="text-2xl font-bold text-gray-800 dark:text-white">45</p>
+                                        <p class="text-xs text-green-600 mt-1">+3 this week</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                                        <span class="text-blue-600 dark:text-blue-400 text-xl">📚</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg card-hover">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Present</p>
+                                        <p class="text-2xl font-bold text-green-600">38</p>
+                                        <p class="text-xs text-green-600 mt-1">Great attendance!</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                                        <span class="text-green-600 dark:text-green-400 text-xl">✅</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg card-hover">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Attendance %</p>
+                                        <p class="text-2xl font-bold text-primary">84.4%</p>
+                                        <p class="text-xs text-yellow-600 mt-1">Need 3 more classes</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                                        <span class="text-purple-600 dark:text-purple-400 text-xl">📊</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg card-hover">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Free Periods Today</p>
+                                        <p class="text-2xl font-bold text-orange-600">2</p>
+                                        <p class="text-xs text-orange-600 mt-1">Use them wisely!</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center">
+                                        <span class="text-orange-600 dark:text-orange-400 text-xl">⏰</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg mb-8">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-semibold text-gray-800 dark:text-white">Smart Suggestions for Your Free Period</h3>
+                                <button onclick="loadFreePeriodSuggestions()" class="text-primary hover:text-primary/80 text-sm font-medium">
+                                    🔄 Refresh
+                                </button>
+                            </div>
+                            <div id="free-period-suggestions" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+                                <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Quick Actions</h3>
+                                <div class="space-y-3">
+                                    <button onclick="switchStudentTab('schedule')" class="w-full text-left p-3 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-all transform hover:scale-105">
+                                        <span class="text-lg mr-3">📅</span>
+                                        <span class="text-gray-800 dark:text-white">View Today's Schedule</span>
+                                    </button>
+                                    <button onclick="switchStudentTab('routine')" class="w-full text-left p-3 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-all transform hover:scale-105">
+                                        <span class="text-lg mr-3">📝</span>
+                                        <span class="text-gray-800 dark:text-white">Manage My Routine</span>
+                                    </button>
+                                    <button onclick="switchStudentTab('attendance')" class="w-full text-left p-3 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-all transform hover:scale-105">
+                                        <span class="text-lg mr-3">📊</span>
+                                        <span class="text-gray-800 dark:text-white">Check Attendance History</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+                                <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Attendance Progress</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-1">
+                                            <span>Overall Attendance</span>
+                                            <span>84.4%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                            <div class="bg-primary h-2 rounded-full progress-bar" style="width: 84.4%"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-1">
+                                            <span>This Month</span>
+                                            <span>92%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                            <div class="bg-green-500 h-2 rounded-full progress-bar" style="width: 92%"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-1">
+                                            <span>This Week</span>
+                                            <span>100%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                            <div class="bg-green-500 h-2 rounded-full progress-bar" style="width: 100%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                                    <p class="text-sm text-green-800 dark:text-green-200">
+                                        🎯 You're doing great! Attend 3 more classes to reach 90% overall attendance.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="schedule-tab" class="student-tab-content hidden">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                            <div class="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
+                                <h3 class="text-xl font-semibold text-gray-800 dark:text-white">Today's Schedule</h3>
+                                <p class="text-gray-600 dark:text-gray-300" id="schedule-date">Monday, January 15, 2024</p>
+                                <div class="mt-2 flex items-center gap-4 text-sm">
+                                    <span class="flex items-center gap-1">
+                                        <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                        Completed
+                                    </span>
+                                    <span class="flex items-center gap-1">
+                                        <div class="w-3 h-3 bg-blue-500 rounded-full pulse-dot"></div>
+                                        Current
+                                    </span>
+                                    <span class="flex items-center gap-1">
+                                        <div class="w-3 h-3 bg-gray-400 rounded-full"></div>
+                                        Upcoming
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <div id="daily-schedule" class="space-y-4">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="routine-tab" class="student-tab-content hidden">
+                        <div class="grid lg:grid-cols-2 gap-6">
+                            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+                                <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Add to My Routine</h3>
+                                <form id="routine-form" class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Activity</label>
+                                        <input type="text" id="routine-activity" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition-all" placeholder="e.g., Study Mathematics" required>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Time</label>
+                                            <input type="time" id="routine-time" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition-all" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Duration (mins)</label>
+                                            <input type="number" id="routine-duration" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition-all" placeholder="60" min="5" max="480" required>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Priority</label>
+                                        <select id="routine-priority" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition-all">
+                                            <option value="high">🔴 High Priority</option>
+                                            <option value="medium" selected>🟡 Medium Priority</option>
+                                            <option value="low">🟢 Low Priority</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="w-full bg-gradient-to-r from-primary to-secondary text-white py-3 px-6 rounded-lg font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all transform hover:scale-105">
+                                        ➕ Add to Routine
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white">My Personal Routine</h3>
+                                    <button onclick="loadPersonalRoutine()" class="text-primary hover:text-primary/80 text-sm font-medium">
+                                        🔄 Refresh
+                                    </button>
+                                </div>
+                                <div id="routine-list" class="space-y-3 max-h-96 overflow-y-auto">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="attendance-tab" class="student-tab-content hidden">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white">Attendance History</h3>
+                                        <p class="text-gray-600 dark:text-gray-300">Your complete attendance record</p>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button class="px-4 py-2 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-lg text-sm font-medium">
+                                            📊 Export
+                                        </button>
+                                        <button class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg text-sm font-medium">
+                                            🔍 Filter
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead class="bg-gray-50 dark:bg-gray-700">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Subject</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Time</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Room</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">2024-01-15</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">Mathematics</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">✅ Present</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">09:00 AM</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Room 101</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">2024-01-14</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">Physics</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">❌ Absent</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">11:00 AM</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Lab 201</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">2024-01-13</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">Chemistry</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">✅ Present</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">02:00 PM</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Lab 301</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">2024-01-12</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">English</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">✅ Present</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">10:00 AM</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Room 205</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">2024-01-11</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">Computer Science</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">✅ Present</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">01:00 PM</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Lab 401</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="teacher-dashboard" class="hidden min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800 dark:text-white">Teacher Dashboard</h2>
+                        <p class="text-gray-600 dark:text-gray-300">Welcome back, <span id="teacher-name" class="font-semibold text-primary">Prof. Smith</span></p>
+                        <div class="mt-2 flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+                            <span class="flex items-center gap-1">
+                                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                System Online
+                            </span>
+                            <span id="teacher-current-time"></span>
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-105">
+                        Logout
+                    </button>
+                </div>
+
+                <div class="grid md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Classes Today</p>
+                                <p class="text-2xl font-bold text-blue-600">5</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                                <span class="text-blue-600 dark:text-blue-400 text-xl">📚</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Students Present</p>
+                                <p class="text-2xl font-bold text-green-600">142</p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                                <span class="text-green-600 dark:text-green-400 text-xl">✅</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Avg Attendance</p>
+                                <p class="text-2xl font-bold text-purple-600">87.5%</p>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                                <span class="text-purple-600 dark:text-purple-400 text-xl">📊</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Next Class</p>
+                                <p class="text-lg font-bold text-orange-600">2:00 PM</p>
+                                <p class="text-xs text-gray-500">CS-A Room 101</p>
+                            </div>
+                            <div class="w-12 h-12 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center">
+                                <span class="text-orange-600 dark:text-orange-400 text-xl">⏰</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="class-selection" class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">📋 Mark Attendance</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Class</label>
+                            <select id="teacher-class" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition-all">
+                                <option value="">Select Class</option>
+                                <option value="CS-A">Computer Science A</option>
+                                <option value="CS-B">Computer Science B</option>
+                                <option value="IT-A">Information Technology A</option>
+                                <option value="IT-B">Information Technology B</option>
+                                <option value="ECE-A">Electronics & Communication A</option>
+                                <option value="ME-A">Mechanical Engineering A</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Batch</label>
+                            <select id="teacher-batch" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition-all">
+                                <option value="">Select Batch</option>
+                                <option value="2021-2025">2021-2025</option>
+                                <option value="2022-2026">2022-2026</option>
+                                <option value="2023-2027">2023-2027</option>
+                                <option value="2024-2028">2024-2028</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button onclick="loadStudentList()" class="mt-4 bg-gradient-to-r from-primary to-secondary text-white px-6 py-3 rounded-lg font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all transform hover:scale-105">
+                        📚 Load Students
+                    </button>
+                </div>
+
+                <div id="student-list" class="hidden bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white">✅ Mark Attendance</h3>
+                        <p class="text-gray-600 dark:text-gray-300">Class: <span id="selected-class" class="font-semibold"></span> | Batch: <span id="selected-batch" class="font-semibold"></span></p>
+                        <div class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                            Click Present or Absent for each student
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div id="students-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                        </div>
+                        <div class="flex gap-4">
+                            <button onclick="submitAttendance()" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-lg font-semibold transition-all transform hover:scale-105">
+                                💾 Submit Attendance
+                            </button>
+                            <button onclick="markAllPresent()" class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition-all">
+                                ✅ All Present
+                            </button>
+                            <button onclick="resetAttendance()" class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all">
+                                🔄 Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="qr-code-display" class="hidden min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+            <div class="max-w-4xl mx-auto px-4 text-center">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-4">Scan QR Code to Mark Attendance</h2>
+                <div id="qrcode" class="flex justify-center my-8"></div>
+                <p class="text-lg text-gray-600 dark:text-gray-300">QR code will refresh in <span id="qr-timer" class="font-bold text-primary">5</span> seconds</p>
+                <button onclick="goHome()" class="mt-8 bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-semibold transition-all transform hover:scale-105">
+                    End Session
+                </button>
+            </div>
+        </div>
+
+        <div id="qr-scanner-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-md w-full animate-slide-up">
+                <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center">Scan QR Code</h3>
+                <div id="qr-reader" style="width: 100%;"></div>
+                <button onclick="hideQrScanner()" class="mt-4 w-full text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
+                    Cancel
+                </button>
+            </div>
+        </div>
+
+        <div id="classroom-setup" class="hidden min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+            <div class="max-w-4xl mx-auto px-4">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-4">📺 Classroom Display Setup</h2>
+                    <p class="text-gray-600 dark:text-gray-300">Configure the live attendance display for your classroom</p>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg mb-8">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Batch</label>
+                            <select id="display-batch" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition-all">
+                                <option value="">Select Batch</option>
+                                <option value="2021-2025">2021-2025</option>
+                                <option value="2022-2026">2022-2026</option>
+                                <option value="2023-2027">2023-2027</option>
+                                <option value="2024-2028">2024-2028</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Semester</label>
+                            <select id="display-semester" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition-all">
+                                <option value="">Select Semester</option>
+                                <option value="1">Semester 1</option>
+                                <option value="2">Semester 2</option>
+                                <option value="3">Semester 3</option>
+                                <option value="4">Semester 4</option>
+                                <option value="5">Semester 5</option>
+                                <option value="6">Semester 6</option>
+                                <option value="7">Semester 7</option>
+                                <option value="8">Semester 8</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 mt-6">
+                        <button onclick="showClassroomDisplay()" class="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 px-6 rounded-lg font-semibold hover:from-green-600 hover:to-emerald-600 transition-all transform hover:scale-105">
+                            🚀 Start Display
+                        </button>
+                        <button onclick="goHome()" class="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
+                            🏠 Back to Home
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">📋 Display Features</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                                    <span class="text-green-600 dark:text-green-400">📊</span>
+                                </div>
+                                <span class="text-gray-700 dark:text-gray-300">Real-time attendance statistics</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                                    <span class="text-blue-600 dark:text-blue-400">🔄</span>
+                                </div>
+                                <span class="text-gray-700 dark:text-gray-300">Auto-refresh every 30 seconds</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                                    <span class="text-purple-600 dark:text-purple-400">📱</span>
+                                </div>
+                                <span class="text-gray-700 dark:text-gray-300">Responsive design for all screens</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center">
+                                    <span class="text-orange-600 dark:text-orange-400">🎨</span>
+                                </div>
+                                <span class="text-gray-700 dark:text-gray-300">Dark/Light theme support</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-red-100 dark:bg-red-900 rounded-lg flex items-center justify-center">
+                                    <span class="text-red-600 dark:text-red-400">⚡</span>
+                                </div>
+                                <span class="text-gray-700 dark:text-gray-300">Fast loading and smooth animations</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-cyan-100 dark:bg-cyan-900 rounded-lg flex items-center justify-center">
+                                    <span class="text-cyan-600 dark:text-cyan-400">📈</span>
+                                </div>
+                                <span class="text-gray-700 dark:text-gray-300">Detailed student progress tracking</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="classroom-display" class="hidden min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="text-center mb-8">
+                    <h2 class="text-4xl font-bold text-gray-800 dark:text-white mb-2">📺 Live Attendance Display</h2>
+                    <p class="text-xl text-gray-600 dark:text-gray-300">Batch: <span id="display-batch-info" class="font-semibold text-primary"></span> | Semester: <span id="display-semester-info" class="font-semibold text-primary"></span></p>
+                    <div class="mt-4 flex justify-center gap-8">
+                        <div class="text-center">
+                            <p class="text-3xl font-bold text-blue-600">120</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Total Students</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-3xl font-bold text-green-600">95</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Present Today</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-3xl font-bold text-red-600">25</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Absent Today</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-3xl font-bold text-purple-600">79.2%</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Attendance Rate</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-sm text-gray-500 dark:text-gray-400">
+                        Last updated: <span id="last-updated"></span> | Auto-refresh: <span class="text-green-600">ON</span>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
+                        <h3 class="text-2xl font-semibold text-gray-800 dark:text-white">📊 Student Attendance Overview</h3>
+                        <p class="text-gray-600 dark:text-gray-300">Complete attendance statistics and records</p>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Roll No</th>
+                                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Student Name</th>
+                                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Active Days</th>
+                                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Present</th>
+                                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Absent</th>
+                                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Attendance %</th>
+                                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="display-students" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <button onclick="goHome()" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition-all transform hover:scale-105">
+                        🏠 Exit Display
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-100 dark:bg-gray-800 border-t border-gray-300 dark:border-gray-700 mt-12">
+        <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="text-gray-700 dark:text-gray-300 text-sm">
+                Made with ❤️ by Shivam Jaiswal &copy; <span id="footer-year"></span>
+            </div>
+            <div class="flex items-center gap-6">
+                <a
+                    href="https://www.instagram.com/shivamjaiswal"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Instagram"
+                    class="text-pink-600 hover:text-pink-800 dark:hover:text-pink-400 transition-colors"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M7.75 2h8.5A5.75 5.75 0 0122 7.75v8.5A5.75 5.75 0 0116.25 22h-8.5A5.75 5.75 0 012 16.25v-8.5A5.75 5.75 0 017.75 2zm0 1.5A4.25 4.25 0 003.5 7.75v8.5A4.25 4.25 0 007.75 20.5h8.5a4.25 4.25 0 004.25-4.25v-8.5A4.25 4.25 0 0016.25 3.5h-8.5zM12 7a5 5 0 110 10 5 5 0 010-10zm0 1.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7zm4.75-.75a1.25 1.25 0 110 2.5 1.25 1.25 0 010-2.5z"
+                        />
+                    </svg>
+                </a>
+                <a
+                    href="https://www.linkedin.com/in/shivamjaiswal"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="LinkedIn"
+                    class="text-blue-700 hover:text-blue-900 dark:hover:text-blue-400 transition-colors"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M4.98 3.5a2.5 2.5 0 11-.001 5.001A2.5 2.5 0 014.98 3.5zM3 8.75h4v12h-4v-12zm7.5 0h3.75v1.75h.05c.52-.98 1.8-2 3.7-2 3.95 0 4.68 2.6 4.68 5.98v6.27h-4v-5.6c0-1.34-.03-3.07-1.87-3.07-1.87 0-2.16 1.46-2.16 2.97v5.7h-4v-12z"
+                        />
+                    </svg>
+                </a>
+                <a
+                    href="mailto:shivamjaiswal@example.com"
+                    aria-label="Email"
+                    class="text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16v16H4z" />
+                        <polyline points="22,6 12,13 2,6" />
+                    </svg>
+                </a>
+                <button
+                    id="contact-us-button"
+                    class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-lg font-semibold transition-colors"
+                    aria-label="Contact Us"
+                >
+                    Contact Us
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <div
+        id="contact-form-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4"
+        aria-hidden="true"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="contact-form-title"
+    >
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-md w-full animate-slide-up relative">
+            <h2 id="contact-form-title" class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Contact Us</h2>
+            <form id="contact-form" class="space-y-4">
+                <div>
+                    <label for="contact-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
+                    <input
+                        type="text"
+                        id="contact-name"
+                        name="name"
+                        class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition-all"
+                        placeholder="Your name"
+                        required
+                    />
+                </div>
+                <div>
+                    <label for="contact-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+                    <input
+                        type="email"
+                        id="contact-email"
+                        name="email"
+                        class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition-all"
+                        placeholder="you@example.com"
+                        required
+                    />
+                </div>
+                <div>
+                    <label for="contact-message" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Message</label>
+                    <textarea
+                        id="contact-message"
+                        name="message"
+                        rows="4"
+                        class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition-all"
+                        placeholder="Your message"
+                        required
+                    ></textarea>
+                </div>
+                <div class="flex justify-end gap-4">
+                    <button
+                        type="button"
+                        id="contact-cancel-button"
+                        class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-lg font-semibold transition-colors"
+                    >
+                        Send
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="script.js"></script>
+</body>
+</html>

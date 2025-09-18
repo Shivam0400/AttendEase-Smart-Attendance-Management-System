@@ -1,0 +1,152 @@
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.05); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* --- New: Subtle pattern overlay for the homepage gradient --- */
+.gradient-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.07"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+    z-index: 1;
+}
+
+/* --- New: Ensures content is above the pattern overlay --- */
+#home-page > div {
+    position: relative;
+    z-index: 2;
+}
+
+.card-hover {
+    transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    margin: auto;
+    border: 2px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.notification-enter {
+    animation: slideUp 0.3s ease-out;
+}
+
+.progress-bar {
+    transition: width 0.5s ease-in-out;
+}
+
+.student-tab.active {
+    color: #6366f1;
+    border-color: #6366f1;
+}
+
+.pulse-dot {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* --- New Additions for Textures & Enhanced UI --- */
+
+/* 1. Subtle background pattern for all pages except the homepage */
+body {
+    background-color: #f1f5f9;
+}
+
+.dark body {
+    background-color: #020617;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"%3E%3Cg fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.06"%3E%3Cpath d="M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+    z-index: -1; /* Place it behind all content */
+}
+
+/* 2. Frosted glass effect for cards and modals */
+.glass-card {
+    background-color: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .glass-card {
+    background-color: rgba(30, 41, 59, 0.6); /* dark:bg-slate-800 with opacity */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 3. Grainy texture overlay for cards */
+.grainy-texture {
+    position: relative;
+    z-index: 1;
+}
+
+.grainy-texture::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAUVBMVEWFhYWDg4N3d3dtbW17e3t1dXVoaGhYWFhPQ0NDQ0NGRkZHR0d6enqrq6uioqKjo6NfX19sbGzo6Ojp6enExMTFxcXIyMjk5OTR0dHR0dHe3t7v7+/gdTBWAAAAHUlEQVR42s3OgQ0AMQzDUGrv/1614wJADjGg1HokzDyx47e5A8s2AAAAAElFTkSuQmCC');
+    opacity: 0.04;
+    pointer-events: none; /* Make sure it doesn't interfere with clicks */
+    z-index: -1;
+    border-radius: inherit; /* Inherit the parent's border-radius */
+}
